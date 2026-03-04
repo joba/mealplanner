@@ -33,13 +33,19 @@ export async function fetchSchoolLunches(weekNumber: number): Promise<DayLunch[]
     }
   }
 
-  const raw = JSON.parse(html.slice(jsonStart, jsonEnd)) as WeekData;
+  // Replace JS `new Date(timestamp)` literals with the numeric timestamp string
+  // so the value becomes valid JSON.
+  const jsonStr = html
+    .slice(jsonStart, jsonEnd)
+    .replace(/new Date\((\d+)\)/g, '"$1"');
+
+  const raw = JSON.parse(jsonStr) as WeekData;
 
   const week = raw.Weeks.find((w) => w.WeekNumber === weekNumber);
   if (!week) return [];
 
   return week.Days.map((day): DayLunch => {
-    const dateMs = parseInt(day.DayMenuDate.replace(/[^0-9]/g, ""), 10);
+    const dateMs = parseInt(day.DayMenuDate, 10);
     const date = new Date(dateMs);
     const isoDate = date.toISOString().split("T")[0];
 
@@ -65,7 +71,7 @@ interface Week {
   Days: Day[];
 }
 interface Day {
-  DayMenuDate: string; // "/Date(1234567890000)/"
+  DayMenuDate: string; // timestamp string after new Date(...) replacement
   WeekDayName?: string;
   IsHoliday: boolean;
   DayMenus: DayMenu[];

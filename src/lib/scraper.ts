@@ -46,7 +46,10 @@ export async function fetchSchoolLunches(weekNumber: number): Promise<DayLunch[]
 
   return week.Days.map((day): DayLunch => {
     const dateMs = parseInt(day.DayMenuDate, 10);
-    const date = new Date(dateMs);
+    // Mashie stores timestamps at local midnight (CET/CEST). The server runs
+    // in UTC, so shift +12h before extracting the UTC date to always land on
+    // the correct calendar day regardless of summer/winter time.
+    const date = new Date(dateMs + 12 * 60 * 60 * 1000);
     const isoDate = date.toISOString().split("T")[0];
 
     const lunchMeals = day.DayMenus.filter((m) =>

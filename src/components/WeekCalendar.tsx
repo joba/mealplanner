@@ -28,6 +28,11 @@ export default function WeekCalendar() {
   const from = toISO(weekDates[0]);
   const to = toISO(weekDates[6]);
   const todayISO = toISO(new Date());
+  const currentMonday = getMondayOfWeek(new Date());
+  const isCurrentWeek = toISO(monday) === toISO(currentMonday);
+  const maxMonday = new Date(currentMonday);
+  maxMonday.setDate(maxMonday.getDate() + 6 * 7);
+  const isMaxWeek = toISO(monday) >= toISO(maxMonday);
 
   const loadPlan = useCallback(async () => {
     const r = await fetch(`/api/plan?from=${from}&to=${to}`);
@@ -68,26 +73,34 @@ export default function WeekCalendar() {
     <div className="space-y-4">
       {/* Week navigation */}
       <div className="flex items-center gap-3">
-        <button
-          onClick={prevWeek}
-          className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
-          aria-label="Föregående vecka"
-        >
-          ←
-        </button>
+        {!isCurrentWeek ? (
+          <button
+            onClick={prevWeek}
+            className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+            aria-label="Föregående vecka"
+          >
+            ←
+          </button>
+        ) : (
+          <div className="p-2 w-9" />
+        )}
         <div className="flex-1 text-center">
           <span className="font-semibold text-gray-800">Vecka {weekNumber}</span>
           <span className="text-sm text-gray-400 ml-2">
             {from} – {to}
           </span>
         </div>
-        <button
-          onClick={nextWeek}
-          className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
-          aria-label="Nästa vecka"
-        >
-          →
-        </button>
+        {!isMaxWeek ? (
+          <button
+            onClick={nextWeek}
+            className="p-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+            aria-label="Nästa vecka"
+          >
+            →
+          </button>
+        ) : (
+          <div className="p-2 w-9" />
+        )}
         <button
           onClick={goToday}
           className="text-xs text-indigo-600 hover:text-indigo-800 px-2 py-1 rounded-lg hover:bg-indigo-50 transition-colors"

@@ -27,13 +27,26 @@ interface Props {
 
 const WEEKDAYS = ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"];
 
+// Every fourth Friday is treated as a non-school day, starting March 27 2026.
+const FOURTH_FRIDAY_REF = new Date(2026, 2, 27); // local midnight
+const MS_28_DAYS = 28 * 24 * 60 * 60 * 1000;
+
+function isEveryFourthFriday(date: Date): boolean {
+  if (date.getDay() !== 5) return false;
+  const diff = date.getTime() - FOURTH_FRIDAY_REF.getTime();
+  return diff >= 0 && diff % MS_28_DAYS === 0;
+}
+
 export default function DayCard({ date, plan, lunch, isToday, onRefresh }: Props) {
   const [picking, setPicking] = useState(false);
-  const isoDate = date.toISOString().split("T")[0];
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  const isoDate = `${y}-${m}-${d}`;
   const weekday = WEEKDAYS[date.getDay()];
   const dayLabel = date.toLocaleDateString("sv-SE", { day: "numeric", month: "short" });
   const dinnerLabel = plan?.mealName ?? plan?.customMeal;
-  const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+  const isWeekend = date.getDay() === 0 || date.getDay() === 6 || (date.getDay() === 5 && !isEveryFourthFriday(date));
 
   return (
     <>

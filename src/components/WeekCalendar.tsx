@@ -85,7 +85,10 @@ export default function WeekCalendar() {
           <div className="p-2 w-9" />
         )}
         <div className="flex-1 text-center">
-          <span className="font-semibold text-gray-800">Vecka {weekNumber}</span>
+          <span className="font-semibold text-gray-800">
+            Vecka {weekNumber}
+          </span>
+          <br />
           <span className="text-sm text-gray-400 ml-2">
             {from} – {to}
           </span>

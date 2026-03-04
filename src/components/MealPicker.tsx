@@ -16,11 +16,19 @@ interface Props {
   onSaved: () => void;
 }
 
-export default function MealPicker({ date, currentMealId, currentCustom, onClose, onSaved }: Props) {
+export default function MealPicker({
+  date,
+  currentMealId,
+  currentCustom,
+  onClose,
+  onSaved,
+}: Props) {
   const [meals, setMeals] = useState<Meal[]>([]);
   const [search, setSearch] = useState("");
   const [custom, setCustom] = useState(currentCustom ?? "");
-  const [tab, setTab] = useState<"library" | "custom">(currentMealId ? "library" : "custom");
+  const [tab, setTab] = useState<"library" | "custom">(
+    currentMealId ? "library" : "custom",
+  );
   const [saving, setSaving] = useState(false);
   const backdropRef = useRef<HTMLDivElement>(null);
 
@@ -35,7 +43,11 @@ export default function MealPicker({ date, currentMealId, currentCustom, onClose
     await fetch("/api/plan", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ date, mealId: mealId ?? null, customMeal: mealId ? null : custom || null }),
+      body: JSON.stringify({
+        date,
+        mealId: mealId ?? null,
+        customMeal: mealId ? null : custom || null,
+      }),
     });
     setSaving(false);
     onSaved();
@@ -55,19 +67,26 @@ export default function MealPicker({ date, currentMealId, currentCustom, onClose
   }
 
   const filtered = meals.filter((m) =>
-    m.name.toLowerCase().includes(search.toLowerCase())
+    m.name.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
     <div
       ref={backdropRef}
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40"
-      onClick={(e) => { if (e.target === backdropRef.current) onClose(); }}
+      onClick={(e) => {
+        if (e.target === backdropRef.current) onClose();
+      }}
     >
       <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:w-96 max-h-[85vh] flex flex-col shadow-xl">
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="font-semibold text-lg">Välj middag</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+          <h2 className="font-semibold text-lg text-gray-500">Välj middag</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+          >
+            &times;
+          </button>
         </div>
 
         <div className="flex border-b">
@@ -89,14 +108,16 @@ export default function MealPicker({ date, currentMealId, currentCustom, onClose
           {tab === "library" ? (
             <>
               <input
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 text-gray-500"
                 placeholder="Sök recept..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 autoFocus
               />
               {filtered.length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-4">Inga recept hittades</p>
+                <p className="text-sm text-gray-400 text-center py-4">
+                  Inga recept hittades
+                </p>
               )}
               {filtered.map((m) => (
                 <button
@@ -104,18 +125,24 @@ export default function MealPicker({ date, currentMealId, currentCustom, onClose
                   onClick={() => saveMeal(m.id)}
                   disabled={saving}
                   className={`w-full text-left px-3 py-2 rounded-lg border hover:bg-indigo-50 hover:border-indigo-300 transition-colors ${
-                    m.id === currentMealId ? "border-indigo-400 bg-indigo-50" : "border-gray-200"
+                    m.id === currentMealId
+                      ? "border-indigo-400 bg-indigo-50"
+                      : "border-gray-200"
                   }`}
                 >
                   <p className="font-medium text-sm">{m.name}</p>
-                  {m.description && <p className="text-xs text-gray-500 mt-0.5">{m.description}</p>}
+                  {m.description && (
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {m.description}
+                    </p>
+                  )}
                 </button>
               ))}
             </>
           ) : (
             <div className="space-y-3">
               <textarea
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none text-gray-500"
                 rows={3}
                 placeholder="T.ex. Köttbullar med potatismos..."
                 value={custom}

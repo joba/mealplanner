@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:mpi.mashie.com)",
+      "Bash(node:*)"
+    ]
+  }
+}

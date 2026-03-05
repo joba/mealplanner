@@ -23,11 +23,16 @@ export default function WeekCalendar() {
   const [plan, setPlan] = useState<PlanEntry[]>([]);
   const [lunches, setLunches] = useState<LunchDay[]>([]);
 
+  const [todayISO, setTodayISO] = useState(() => "");
+
+  useEffect(() => {
+    setTodayISO(toISO(new Date()));
+  }, []);
+
   const weekDates = getWeekDates(monday);
   const weekNumber = getISOWeek(monday);
   const from = toISO(weekDates[0]);
   const to = toISO(weekDates[6]);
-  const todayISO = toISO(new Date());
   const currentMonday = getMondayOfWeek(new Date());
   const isCurrentWeek = toISO(monday) === toISO(currentMonday);
   const maxMonday = new Date(currentMonday);
